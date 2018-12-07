@@ -1,0 +1,44 @@
+SIMPLE VCF MANIPULATION - Part 1
+#Filtering vcf files
+
+#How to keep only the "PASS" variants using awk.
+#If PASS exists in column 7.
+awk -F '\t' '{$7 == "PASS" print}' myvcf.vcf > myvcf_PASS.vcf
+
+#For many files
+
+for i in *.vcf;do awk -F '\t' '{$7 == "PASS" print}' $i > ${i}_PASS.vcf;done
+
+#How to keep only the "PASS" variants and include the header using awk.
+awk -F '\t' '{if($0 ~ /\#/) print; else if($7 == "PASS") print}' myvcf.vcf > my_PASS_vcf.vcf
+
+#If you want to count how many 'PASS' variants you have simply do:
+
+awk -F '\t' '{$7 == "PASS" print}' |wc
+
+#How to keep only the "PASS" variants using grep.
+$grep -w 'PASS' my.vcf > my_new.vcf
+
+#If you want to count simply do:
+$grep -w '^#\|^PASS' |wc
+
+
+#How to keep only the "PASS" variants and include the header using grep.
+$grep -w '^#\|^PASS' my.vcf > my_new.vcf
+
+#Note: you can keep the header and any other feature of your choice if you substitute PASS with that feature. Next I am going to provide some simple examples.
+
+#Example1: How to extract specific chromosomes easily with awk.
+awk -F '\t' '{$1 == "chrX" print}' myvcf.vcf > my_PASS_vcf.vcf
+
+#Example2: How to extract specific chromosomes easily with grep.
+$grep -w '^#\|^chrX' my.vcf > my_new.vcf
+
+Alternative options: 
+
+#Using bcftools to extract chromosomes is easy. Note that bcftools also keep the header in the output.
+#Example: 
+bcftools view input.vcf.gz --regions chrX
+
+
+##################################################################################################################
